@@ -1,0 +1,197 @@
+.card-md{
+
+    a.card{
+        @include card-image-full;
+        @include card-image-tint;
+
+        max-height:392px;
+        height: 392px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        color:#fefefe;
+
+        @media screen and (max-width: $mobile-break){
+            height: auto;
+        }
+
+
+
+        .article-icon{
+            width: 38px;
+            height: 37px;
+        }
+
+
+
+        .content{
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: #fefefe;
+            padding-top: 280px;
+            padding-left: 40px;
+            padding-right: 40px;
+
+            @media screen and (max-width: $mobile-break){
+                padding: 180px 20px 10px 20px;
+            }
+
+            .category{
+                position: absolute;
+                right: 0;
+                top: 0;
+                background-color: $brand-yellow;
+                color: #1a1818;
+                // @media screen and (max-width: $mobile-break){
+                //     font-size: rem(8);
+                //     font-weight:900;
+                //     padding: 5px 8px;
+                // }
+            }
+
+
+            .article-icon {
+                order: 1;
+                margin: auto;
+                margin-bottom:12px;
+            }
+
+            h2 {
+                order: 3;
+                text-transform: uppercase;
+                line-height: 28.0px;
+                height:auto;
+                max-height:70px;
+                margin-bottom:9px;
+                margin-top:0;
+
+                // @media screen and (max-width: $mobile-break) {
+                //     line-height:1.3em;
+                //     font-size:  rem(18);
+                //     max-height:50px;
+
+                // }
+            }
+
+            p {
+                order: 4;
+                display: none;
+                // @media screen and (max-width: $sm-mobile-break){
+                //     display: none;
+                // }
+            }
+
+            time{
+                display:none;
+            }
+            
+            .author{
+                order: 2;
+                background-color: transparent;
+                color: #fefefe;
+                margin-bottom:0;
+                // @media screen and (max-width: $mobile-break) {
+                //     font-size: rem(9);
+                //     font-weight:900;
+                // }
+
+            }
+
+
+        }
+
+        .share{
+            display: none;
+        }
+
+
+        &.without__image {
+            background: rgba(34, 31, 32, .8);
+        }
+
+        &.social {
+            .content{
+
+                padding-top: 190px;
+
+                @media screen and (max-width: $mobile-break) {
+                    padding-top: 120px;
+                }
+
+
+                > h2 {
+                    font-size: rem(20);
+                    height:60px;
+                    max-height:80px;
+                    line-height:1.3;
+                }
+
+                .author {
+                    margin-bottom:12px;
+                }
+            }
+        }
+
+
+        &.twitter{
+            .content{
+                time{
+                    margin-bottom: 5px;
+                }
+            }
+        }
+
+        &.instagram{
+            .content{
+                time{
+                    margin-bottom: 5px;
+                }
+            }
+            &.without__content {
+                .content{
+                    padding-top: 280px;
+                }
+            }
+        }
+
+        &.youtube{
+            .content{
+                time{
+                    margin-bottom: 5px;
+                }
+            }
+
+        }
+
+        &.vimeo{
+            
+            .content{
+
+                time{
+                    margin-bottom: 5px;
+                }
+            }
+        }
+
+        // &.soundcloud{
+        //     figure{
+        //         bottom: 87px;
+        //     }
+
+        //     .article-icon{
+        //         display: none;
+        //     }
+
+        //     .content{
+        //         padding-top: 83px;
+        //     }
+
+        //     .other-content{
+        //         position: absolute;
+        //         bottom: 0;
+        //         width: 100%;
+        //         height: 87px;
+        //     }
+        // }
+    }
+}

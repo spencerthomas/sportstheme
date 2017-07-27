@@ -1,0 +1,24 @@
+.top-stories_index2{
+    margin-top:40px;
+    margin-bottom: 80px;
+    
+    > h2:first-child{
+        margin-top: 15px;
+        font-size: rem(18);
+        width: auto;
+        @media screen and (max-width: $mmd-break){
+            width: 100%;
+            padding-left: 15px;
+        }
+
+        @media screen and (max-width: $md-break){
+            padding-left: 0;
+        }
+
+        @media screen and (max-width: $mobile-break){
+            margin-top: 19px;
+            font-size: rem(16);
+            font-weight:900;
+        }
+    }
+}

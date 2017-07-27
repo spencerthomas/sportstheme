@@ -1,0 +1,108 @@
+{{ set(this, 'title', 'Search - ' ~ search) }}
+
+{{this.registerJs("SearchController.listing();")}}
+
+{% set limit = 20 %}
+{% set articles = _Search.searchArticles({'limit': limit, 'offset': 0, 'search': search}) %}
+{% set networkData = _Network.getNetworkData() %}
+
+
+
+
+<!-- used to index each article as we loop over throughout the template -->
+{% set articleCount = 0 %}
+
+
+
+
+    <!--placeholder temp -->
+    <section class="page-channel container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <h1>{{this.title}}</h1>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+    </section><!--featured-carousel-->
+
+    <section class="content-block container top">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-6 card-md'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-3 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-3 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-3 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-3 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-6 card-md'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+
+                </div><!--row-->
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="content-block container">
+        <div class="row">
+
+            <div class="col-sm-12">
+                <div class="row">
+
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-8 card-md'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+
+                </div><!--row-->
+            </div>
+
+        </div>
+    </section>

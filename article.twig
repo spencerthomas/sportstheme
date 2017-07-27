@@ -1,0 +1,209 @@
+{{ set(this, 'title', article.title) }}
+
+{{this.registerJs("ArticleController.view();")}}
+{{this.registerJs("HomeController.blog();")}}
+
+{{this.registerLinkTag({rel:'amphtml', href:_AppHelper.getServerUrl(false)~'?amp=1'})}}
+
+
+{% set status = 'follow' %}
+{% set text = 'Follow +' %}
+{% set authorId = article.createdBy['id'] %}
+{% set authorGUID = article.createdBy['guid'] %}
+
+{% if not _User.isGuset() and _User.isUserFollowing('user', authorId)%}
+    {% set status = 'unfollow' %}
+    {% set text = 'Following -' %}
+{% endif %}
+{% set placeholder = 'https://placeholdit.imgix.net/~text?txtsize=33&txt=Loading&w=1160&h=538' %}
+{% set imgWidth = 1000 %}
+{% set imgHeight = 400 %}
+
+
+{% set articleImg = false %}
+{% if article.media|length > 0 %}
+    {% set articleImg      = _Media.getMediaUrl(article.media[0],imgWidth, imgHeight, {'crop': 'fill', 'gravity': 'faces'} ) %}
+    {% set articleImgSmall = _Media.getMediaUrl(article.media[0],500,      500,       {'crop': 'fill', 'gravity': 'faces'} ) %}
+    {# {% set articleImgSmall = "https://d3pbdxdl8c65wb.cloudfront.net/cloudinary/2017/Jul/16/AuOCehWl4RGN9EGaiyDM.jpg" %} #}
+{% endif %}
+
+
+
+{% set profileImg = _Media.getMediaUrl(article.createdBy['media'], 100, 100, {radius: 'max', gravity: 'face', 'crop': 'thumb', type: 'user'}) %}
+
+
+
+
+    <section class="page-hero">
+        <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject" 
+             class="image-wrapper lazyload-remove" 
+             data-thumbnail="{{article.media[0].path}}" 
+             data-original="{{article.media[0].path}}">
+
+            <meta itemprop="url" content="{{article.media[0].path}}">
+            <meta itemprop="height" content="{{article.media[0].height}}">
+            <meta itemprop="width" content="{{article.media[0].width}}">
+            
+
+            {% if articleImg %} 
+                <figure class="featured">
+                    <picture>
+                        <source media="(max-width: 620px)" srcset="{{articleImgSmall}}">
+                        <img src="{{articleImg}}" class="img-responsive">
+                    </picture>
+
+                     {% if article.media[0].type == 'video' %} 
+                         {% set mediaUrl = "" %}
+                         {% if article.media[0].media.isSystemVideo == 'TRUE'%}
+                             {% set mediaUrl = _Media.getMediaVideoUrl(article.media[0].media, 0, 0,{resource_type: 'video', format: 'mp4'})  %}
+                         {% endif %}
+                         <a href="javascript:void(0)" 
+                             itemprop="video" 
+                             class="video-overlay video-player" 
+                             data-source="{{article.media[0].source}}" 
+                             data-video-id="{{article.media[0].videoId}}" 
+                             data-url="{{mediaUrl}}" 
+                             data-poster="{{article.media[0].path}}" 
+                             data-caption="{{article.title | raw}}">
+                            <div class="icons">
+                                <div class="icon"><i class="fa fa-play"></i></div>
+                            </div>
+                         </a>
+                     {% endif %}
+{#                      <figcaption>
+                         <p>{{article.media[0].caption}}</p>
+                     </figcaption>
+ #}                 </figure>
+             {% endif %}
+
+
+
+
+
+{#             {% if article.media[0].type == 'video' %} 
+                {% set mediaUrl = "" %}
+                {% if article.media[0].isSystemVideo == 'TRUE'%}
+                    {% set mediaUrl = _article.media[0].getMediaVideoUrl(media, 0, 0,{resource_type: 'video', format: 'mp4'})  %}
+                {% endif %}
+                <a  href="javascript:void(0)"  
+                    itemprop="video" 
+                    class="video-overlay video-player" 
+                    data-source="{{article.media[0].source}}" 
+                    data-video-id="{{article.media[0].videoId}}" 
+                    data-url="{{mediaUrl}}" 
+                    data-poster="{{article.media[0].path}}" 
+                    data-caption="{{article.title | raw}}">
+
+                   <div class="icons">
+                    
+                       <div class="icon"><i class="fa fa-play"></i></div>
+                   </div>
+                </a>
+            {% endif %}
+ #}        </div>
+
+            
+        <span class="category">{{ article.label}}</span>
+   </section><!--page-hero-->
+
+   <div class="container page-content">
+        
+
+        <article class="col-sm-12">
+            
+            <header class="col-sm-8 col-sm-offset-2">
+                <h1>{{article.title | raw}}</h1>
+
+                <time datetime="2016-11-16">{{_AppHelper.getDateTimeBasedOnTimezone(article.publishedDate,'d M Y')}}</time>
+            </header>
+
+
+
+            {% if article['createdBy']['coauthors'] is empty %}
+                <div class="author-info col-sm-8 col-sm-offset-2">
+                    <a href="{{_AppHelper.getUserProfileUrl(article.createdBy['username'])}}">
+                        <img src="{{ profileImg }}" alt="Author name">
+                    </a>
+                    <span class="name">{{article.createdBy['displayName']}}</span>
+                    <p>{{ article.createdBy['bio'] }}</p>
+                    
+                    {% if not _User.isGuest() %}
+                        <a href="javascript:void(0)" class="btn btn-black follow followUser" data-guid="{{article.createdBy['guid']}}" data-status="{{status}}">{{text}}</a>
+                    {% endif %}
+
+                </div>
+            {% else %}
+                <div class="author-inline col-sm-8 col-sm-offset-2">
+                    <a href="{{_AppHelper.getUserProfileUrl(article.createdBy['username'])}}">
+                        <img src="{{ profileImg }}" alt="Author name" >
+                        <span class="name">{{article.createdBy['displayName']}}</span>
+                    </a>
+
+                {% for coauthor in article['createdBy']['coauthors'] %}
+                        <a href="{{_AppHelper.getUserProfileUrl(coauthor['username'])}}">
+                            <img src="{{_Media.getMediaUrl(coauthor['media'], 100, 100, {radius: 'max', gravity: 'face', 'crop': 'thumb', type: 'user'}) }}" alt="Author name">
+                            <span class="name">{{coauthor['displayName']}}</span>
+                        </a>
+
+                {% endfor %}
+                    </div>
+            {% endif %}
+
+
+
+            <div class="article-content-icons-wrapper col-sm-12">
+                <aside class="col-sm-2">
+                   <ul class="social-link-sidebar">
+                        <li>
+                            <a href="http://www.facebook.com/sharer/sharer.php?u={{article.url}}&title={{ article.title|url_encode }}" target="_blank">
+                                <span class="sr-only">Facebook</span>
+                                <span class="facebook-blk icon"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://twitter.com/intent/tweet?status={{ article.title|url_encode }}%20{{article.url}}" target="_blank">
+                                <span class="sr-only">Twitter</span>
+                                <span class="twitter-blk icon"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:?subject={{ article.title|url_encode }}&body={{ article.title|url_encode }}%0D%0A%3C{{article.url|url_encode}}%3E">{# %3Cimg%3E{{ articleImg|url_encode }}%3C%2Fimg%3E%0D%0A{{ article.content|url_encode }}"> #}
+                                <span class="sr-only">Mail</span>
+                                <span class="mail-blk icon"></span>
+                            </a>
+                        </li>
+                   </ul>
+                </aside>
+
+                <div class="content col-sm-8">
+                    <p>{{ article.content | preg_replace('/^<p>/', '<p class="article-lead">') | _resizeImages({"width":740}) | raw }}</p>
+                </div>
+
+            </div>
+
+       
+       </article>
+    </div><!--page-content-->
+
+    <section class="related-posts">
+        <div class="container">
+            <div class="col-sm-12 text-center">
+                <h2>YOU MIGHT ALSO LIKE...</h2>
+            </div>
+
+
+            <div class="col-sm-12">
+                {% set popularArticles = _Article.getPopularArticles({ limit: 3, excludeArticleIds : article.id }) %}
+                {% if popularArticles|length > 0 %}
+                    {% for article in popularArticles %}
+                        {{this.render('partials/_single-article.twig', {article: article, containerClass: 'col-sm-12 col-md-4 card-sm', cardClass : 'card__news'}) | raw}}
+                    {% endfor %}
+                {% else %}
+                    <p class="nodata text-center">No data found.</p>
+                {% endif %}
+            </div>
+
+
+
+                    </div><!--container-->
+    </section><!--related-posts-->

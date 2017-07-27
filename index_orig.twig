@@ -1,0 +1,331 @@
+{{ set(this, 'title', _Blog.getBlogTitle()) }}
+{% set networkData = _Network.getNetworkData() %}
+
+{{this.registerJs("HomeController.listing();")}}
+{% set limit = 20 %}
+
+{% set articlesArr = _Blog.getBlogFeed({'limit': limit, 'offset': 0}) %}
+{% set articles = articlesArr.articles %}
+
+{% set articleCount = 0 %}
+
+{% set popularArticles = _Article.getPopularArticles({ limit: 10, sortBy: 'VIEWS' }) %}
+
+
+{% set sections =  {
+        "Breaking News": {
+            "feed": "",
+            "link": ""
+        }, 
+        "The Wire": {
+            "feed": "",
+            "link": ""
+        }
+    }
+%}
+
+{% for key, value in sections %}
+    {% for blog in networkData.networkBlogs %}
+        {% if blog.title | lower == key %}
+            {% set sections = sections | merge({
+                (key) : {
+                    'feed': _Blog.getBlogFeed({'limit': 4, 'offset': 0, 'blogid':blog.guid}),
+                    'link' : blog.link
+                    }
+                }) %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+
+{# {% set sidePanel =  "Breaking News" %}
+{% set sidePanelfeed = [] %}
+{% set sidePanelLink = "" %}
+
+{% for blog in networkData.networkBlogs %}
+    {% if blog.title == sidePanel %}
+        {% set sidePanelfeed = _Blog.getBlogFeed({'limit': 5, 'offset': 0, 'blogid':blog.guid}) %}
+        {% set sidePanelLink = blog.link %}
+
+    {% endif %}
+{% endfor %}
+
+{% set two_serPanel =  "2SER" %}
+{% set two_serPanelfeed = [] %}
+{% for blog in networkData.networkBlogs %}
+    {% if blog.title == two_serPanel %}
+        {% set two_serPanelLink = blog.link %}
+        {% set two_serPanelfeed = _Blog.getBlogFeed({'limit': 5, 'offset': 0, 'blogid':blog.guid}) %}
+    {% endif %}
+{% endfor %} #}
+
+
+
+
+
+
+
+    <!--placeholder temp -->
+    {% if articles|length > 0 %}
+
+    <section class="featured-carousel">
+        <!-- Swiper -->
+        <div id="index-swiper" class="swiper-container">
+            <div class="swiper-wrapper">
+                {% for i in 0..2 %}
+                    {% if articles[i] %}                                                                
+                        {{this.render('partials/_single-article.twig', {article: articles[i], position: (i+1), containerClass: 'swiper-slide', swap: 'false'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <!-- Add Pagination -->
+            <div class="container">
+
+                <div class="custom-pagination">
+                    <h2 class="top-stories">TOP STORIES</h2>
+
+                    {% if articles[0] %}
+                        {% set articleImg = articles[0].articleId > 0 ? _Media.getMediaUrl(articles[0].featuredMedia,50, 50, {'crop': 'fill', 'gravity': 'faces'} ) : articles[0].social.media['path'] %}
+                        {% set articleText = articles[0].articleId > 0 ? Helper.htmlToText(articles[0].title, -1) | raw | escape('html') : Helper.htmlToText(articles[0].social.content, -1) | raw | escape('html') %}
+
+                        <div class="slide-1 pagination-item swap active" 
+                             data-proxyfor="swiper-wrapper" 
+                             data-position="1" 
+                             data-slide="0"
+                             data-id="{{ articles[0].articleId > 0 ? articles[0].articleId : articles[i].socialId }}" 
+                             data-social="{{ articles[0].socialId > 0 ? '1' : '0' }}"
+                             data-article-image="{{ articleImg }}" 
+                             data-article-text="{{ articleText }}">
+
+                            <span class="slide-no">01</span>
+                            <time datetime="{{ articles[0].metaPublishDate }}">{{_AppHelper.getDateTimeBasedOnTimezone(articles[0].publishDate, 'd M Y')}}</time>
+                            
+                            {% if articles[0].articleId > 0 %}
+                                <h2>{{ articles[0].title | raw }}</h2>
+                            {% else %}
+                                <h2>{{ articles[0].social.content }}</h2>
+                            {% endif %}
+
+                        </div>
+                    {% endif %}
+    
+                    {% if articles[1] %}
+                            
+                        {% set articleImg = articles[1].articleId > 0 ? _Media.getMediaUrl(articles[1].featuredMedia,50, 50, {'crop': 'fill', 'gravity': 'faces'} ) : articles[1].social.media['path'] %}
+                        {% set articleText = articles[1].articleId > 0 ? Helper.htmlToText(articles[1].title, -1) | raw | escape('html') : Helper.htmlToText(articles[1].social.content, -1) | raw | escape('html') %}
+                        <div class="slide-1 pagination-item swap" 
+                             data-proxyfor="swiper-wrapper" 
+                             data-position="2" 
+                             data-slide="1"
+                             data-id="{{ articles[1].articleId > 0 ? articles[1].articleId : articles[1].socialId }}" 
+                             data-social="{{ articles[1].socialId > 0 ? '1' : '0' }}"
+                             data-article-image="{{ articleImg }}" 
+                             data-article-text="{{articleText}}">
+                            <span class="slide-no">02</span>
+                            <time datetime="{{ articles[1].metaPublishDate }}">{{_AppHelper.getDateTimeBasedOnTimezone(articles[1].publishDate, 'd M Y')}}</time>
+                            {% if articles[1].articleId > 0 %}
+                                <h2>{{ articles[1].title | raw }}</h2>
+                            {% else %}
+                                <h2>{{ articles[1].social.content }}</h2>
+                            {% endif %}
+
+                        </div>
+                    {% endif %}
+
+                    {% if articles[2] %}
+                        {% set articleImg = articles[2].articleId > 0 ? _Media.getMediaUrl(articles[2].featuredMedia,50, 50, {'crop': 'fill', 'gravity': 'faces'} ) : articles[2].social.media['path'] %}
+                        {% set articleText = articles[2].articleId > 0 ? Helper.htmlToText(articles[2].title, -1) | raw | escape('html') : Helper.htmlToText(articles[2].social.content, -1) | raw | escape('html') %}
+                        <div class="slide-1 pagination-item swap" 
+                             data-proxyfor="swiper-wrapper" 
+                             data-position="3" 
+                             data-slide="2"
+                             data-id="{{ articles[2].articleId > 0 ? articles[2].articleId : articles[2].socialId }}" 
+                             data-social="{{ articles[2].socialId > 0 ? '1' : '0' }}"
+                             data-article-image="{{ articleImg }}" 
+                             data-article-text="{{articleText}}">
+                            <span class="slide-no">03</span>
+                            <time datetime="{{ articles[2].metaPublishDate }}">{{_AppHelper.getDateTimeBasedOnTimezone(articles[2].publishDate, 'd M Y')}}</time>
+                            {% if articles[2].articleId > 0 %}
+                                <h2>{{ articles[2].title | raw  }}</h2>
+                            {% else %}
+                                <h2>{{ articles[2].social.content }}</h2>
+                            {% endif %}
+
+                        </div>
+                    {% endif %}
+                </div><!--custom-pagination-->
+            </div><!--container-->
+
+            <!-- Add Pagination -->
+            <div class="swiper-pagination swiper-pagination-white"></div>
+
+        </div>
+    </section><!--featured-carousel-->
+    {% endif %}
+
+
+    
+    <section class="content-block container">
+        <div class="row">
+
+            <div class="col-md-9 col-sm-12">
+                <div class="row">
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-8 card-md'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-8 card-md'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                </div><!--row-->
+            </div>
+
+            <div class="col-md-3 col-sm-12">
+                <aside class="left-border">
+                    
+
+                    {% if sections['Breaking News'].feed.articles|length > 0 %}
+
+                    <section class="aap-news">
+
+                        <a href ="{{ sections['Breaking News'].link }}"><h2>AAP<br />BREAKING<br />NEWS</h2></a>
+                        {% for i in 0..4 %}
+                            {% if sections['Breaking News'].feed.articles[i] %}
+                                {{this.render('partials/_sidebar-article.twig', {article: sections['Breaking News'].feed.articles[i]}) | raw}}
+                            {% endif %}
+                        {% endfor %}
+
+                        <a href="{{ sidePanelLink }}" class="viewmore">VIEW MORE</a>
+                    </section>
+                    {% endif %}
+
+                    <section class="subscribe">
+                        <h3>Get Central News direct to your inbox</h3>
+                        <form method="get" id="subscribe-form" action="#">
+                            <label for="header-search" class="assistive-text sr-only">Search</label>
+                            <div class="input-group subscribe-group">
+                                <input type="email" class="field form-control" name="email" placeholder="Email" required="">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit" id="searchsubmit">
+                                        <span class="icon-submit icon"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    {% if sections['The Wire'].feed.articles|length > 0 %}
+    <div class="container">
+        <a href="{{ sections['The Wire'].link }}"><h5 class="ser-h5">The Wire</h5></a>
+        <section class="content-block ser">
+            <div class="row">
+                <div class="col-sm-4">
+                    <a href="http://www.2ser.com/players" onClick="window.open(this.href, 'child', 'scrollbars,width=750,height=430'); return false">
+                        <img src="{{networkData.templatePath}}/static/images/2SER_Desktop.jpg" alt="ALT">
+                    </a>
+                </div><!--col-sm-4-->
+                
+                {% for i in 0..1 %}
+                    {% if sections['The Wire'].feed.articles[i] %}        
+                        {{this.render('partials/_2ser-article.twig', {article: sections['The Wire'].feed.articles[i], 'position': (i+1), containerClass: 'col-sm-4'}) | raw}}
+                    {% endif %}                   
+                {% endfor %}
+            </div><!--row-->
+        </section><!--ser-->
+    </div>
+    {% endif %}
+
+
+
+
+
+    <section class="highlight content-block">
+        {% if articles[articleCount] %}
+            {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'card-lg'}) | raw}}
+            {% set articleCount = articleCount + 1 %}
+        {% endif %}
+    </section><!--highlight-->
+
+    <section class="content-block container">
+        <div class="row">
+            <div class="col-md-3 col-sm-12">
+                <aside class="right-border">
+                    <section class="top-stories-sidebar">
+                        <h2>MOST VIEWED<br /> STORIES</h2>
+
+                        {% if popularArticles|length > 0 %}
+                            {% for article in popularArticles %}
+                                {{this.render('partials/_sidebar-article.twig', {article: article}) | raw}}
+                            {% endfor %}
+                        {% endif %}
+
+                    </section>
+                </aside>
+            </div>
+
+            <div class="col-md-9 col-sm-12">
+                <div class="row">
+
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-8 card-md'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+                    {% if articles[articleCount] %}
+                        {{this.render('partials/_single-article.twig', {article: articles[articleCount], 'position': (articleCount+1), containerClass: 'col-sm-4 card-sm'}) | raw}}
+                        {% set articleCount = articleCount + 1 %}
+                    {% endif %}
+
+                </div><!--row-->
+            </div>
+            
+
+        </div>
+    </section>
+
+    <section class="content-block container">
+        <div class="row section__content">
+            <div class="ajaxArticles col-sm-9 col-sm-offset-3" data-offset="2" data-existing-nonpinned-count="{{articlesArr.existingNonPinnedCount}}">
+                
+            </div>
+            <a class="loadMoreArticles col-sm-9 col-sm-offset-3" href="#">Load more <i class="fa fa-refresh"></i></a>
+        </div>
+
+        {% set noDataCls = 'hide' %}
+        {% if articles|length == 0 %}
+            {% set noDataCls = '' %}
+         {% endif %}
+        <div class="row text-center has-margin-bottom-20 has-margin-top-20 {{noDataCls}} NoArticlesMsg">
+            <p class="no-data text-center">No articles found.</p>  
+        </div>
+
+        
+    </section>
